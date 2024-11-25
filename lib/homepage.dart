@@ -121,9 +121,20 @@ class _HomepageState extends State<Homepage> {
               SizedBox(
                 height: raints.maxHeight, //696
                 width: raints.maxWidth, //1280
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: Image.asset('assets/images/$wallpaper'),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.cover,
+                      child: Image.asset('assets/images/$wallpaper'),
+                    ),
+                    Opacity(
+                      opacity: 0.3,
+                      child: Container(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -279,20 +290,26 @@ class _HomepageState extends State<Homepage> {
                   children: [
                     Text(
                       currentTime,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 48,
-                        color: Colors.white,
                         fontWeight: FontWeight.normal,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 1
+                          ..color = Colors.white,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 5),
                       child: Text(
                         currentDate,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
-                          color: Colors.white,
                           fontWeight: FontWeight.normal,
+                          foreground: Paint()
+                            ..style = PaintingStyle.stroke
+                            ..strokeWidth = 0.5
+                            ..color = Colors.white,
                         ),
                       ),
                     ),
@@ -347,11 +364,21 @@ class _HomepageState extends State<Homepage> {
                       children: [
                         Text(
                           fullname,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 0.7
+                              ..color = Colors.white,
+                          ),
                         ),
                         Text(
                           'Startpage',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 0.3
+                              ..color = Colors.white,
+                          ),
                         ),
                       ],
                     ),
@@ -386,10 +413,13 @@ class ProgressBar extends StatelessWidget {
         Text(
           title,
           textAlign: TextAlign.left,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
-            color: Colors.white,
             fontWeight: FontWeight.normal,
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 0.5
+              ..color = Colors.white,
           ),
         ),
         SizedBox(height: 5),
