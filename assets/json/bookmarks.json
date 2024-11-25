@@ -1,0 +1,17 @@
+{
+    "bookmarks": [
+        {
+            "label": "Google",
+            "submenu": [
+                {
+                    "label": "Email",
+                    "url": "https://mail.google.com/mail/u/0/#inbox"
+                },
+                {
+                    "label": "Storage",
+                    "url": "https://drive.google.com/drive/my-drive"
+                }
+            ]
+        }
+    ]
+}
