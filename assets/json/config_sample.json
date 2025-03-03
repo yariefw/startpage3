@@ -1,0 +1,39 @@
+{
+    "fullname": "Yusuf Arief Wicaksono",
+    "profile": "https://raw.githubusercontent.com/yariefw/startpage3/refs/heads/main/assets/images/profile.jpeg",
+    "wallpaper": "https://raw.githubusercontent.com/yariefw/startpage3/dbc7d39c0fc6b3a49362a38082558c2777458aa6/assets/images/wallpaper2.jpg",
+    "work_start":"07:30",
+    "work_finish":"16:30",
+    "bookmarks": [
+        {
+            "label": "Productivity",
+            "submenu": [
+                {
+                    "label": "Email",
+                    "url": "https://mail.google.com/mail/u/0/#inbox"
+                },
+                {
+                    "label": "Storage",
+                    "url": "https://drive.google.com/drive/my-drive"
+                }
+            ]
+        },
+        {
+            "label": "Entertainment",
+            "submenu": [
+                {
+                    "label": "Tasting History",
+                    "url": "https://www.youtube.com/@TastingHistory/videos"
+                },
+                {
+                    "label": "Technology Connections",
+                    "url": "https://www.youtube.com/@TechnologyConnections/videos"
+                },
+                {
+                    "label": "Basement Brothers",
+                    "url": "https://www.youtube.com/@BasementBrothers/videos"
+                }
+            ]
+        }
+    ]
+}

@@ -1,7 +1,7 @@
-import 'package:startpage/menu_item.dart';
+import 'package:startpage/model/menu_item.dart';
 
-String wallpaper = 'wallpaper2.jpg';
-String profile = 'profile.jpeg';
-String fullname = 'Yusuf Arief Wicaksono';
+String wallpaper = '';
+String profile = '';
+String fullname = 'User Name';
 
 List<MenuItem> bookmarks = [];
