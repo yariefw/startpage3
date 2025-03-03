@@ -57,6 +57,9 @@ class HomepageCubit extends Cubit<HomepageState> {
 
       // Allow overriding from uri params
 
+      fullname = getUriParameter('fullname') ?? fullname;
+      profile = getUriParameter('profile') ?? profile;
+      wallpaper = getUriParameter('wallpaper') ?? wallpaper;
       workStart = getUriParameter('work_start') ?? workStart;
       workFinish = getUriParameter('work_finish') ?? workFinish;
 
