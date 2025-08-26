@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:startpage/extensions/window_size_extension.dart';
@@ -403,6 +404,7 @@ class _HomepageState extends State<Homepage> {
                                           ),
                                         ),
                                       ),
+                                SizedBox(height: 50),
                               ],
                             ),
                           ),
@@ -621,8 +623,21 @@ class IconLink extends StatelessWidget {
       onTap: () {
         js.context.callMethod("open", [url, "_self"]);
       },
-      onLongPress: () {
+      onDoubleTap: () {
         js.context.callMethod("open", [url]);
+      },
+      onLongPress: () {
+        Clipboard.setData(ClipboardData(text: url)).then(
+          (_) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("URL copied to clipboard"),
+                ),
+              );
+            }
+          },
+        );
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
