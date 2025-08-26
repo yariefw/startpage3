@@ -122,7 +122,7 @@ class HomepageCubit extends Cubit<HomepageState> {
 
       if (!isHasConfig) {
         String template = await loadStringFromAsset(
-          'assets/json/config_template.json',
+          'assets/json/config_sample.json',
         );
 
         window.localStorage[config] = template;
