@@ -44,7 +44,7 @@ class _DashboardPageState extends State<DashboardPage>
             viewBackground(),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(15),
                 child: Stack(
                   children: [
                     Align(
@@ -55,7 +55,10 @@ class _DashboardPageState extends State<DashboardPage>
                         constraints: BoxConstraints(
                           maxWidth: max(bookmarksMaxWidth, bookmarksMinWidth),
                         ),
-                        child: viewBookmarks(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 15),
+                          child: viewBookmarks(),
+                        ),
                       ),
                     ),
                     if (constraints.maxWidth > timerMinWidth)
@@ -142,7 +145,7 @@ class _DashboardPageState extends State<DashboardPage>
                         ),
             ),
             Opacity(
-              opacity: 0.3,
+              opacity: 0.75,
               child: Container(
                 color: Colors.black,
               ),
