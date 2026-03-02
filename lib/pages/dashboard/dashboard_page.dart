@@ -13,10 +13,13 @@ class _DashboardPageState extends State<DashboardPage>
     delay: Duration(milliseconds: 300),
   );
 
+  double get bookmarksMinWidth => 325;
   double get bookmarksMaxWidth => context.screenWidth * 0.18;
-  double get bookmarksMinWidth => 350;
+  double get bookmarksNoTimerMaxWidth => context.screenWidth * 0.65;
 
   double get timerMinWidth => 650;
+
+  bool get isDisplayRightPanel => context.screenWidth > timerMinWidth;
 
   @override
   void initState() {
@@ -48,12 +51,14 @@ class _DashboardPageState extends State<DashboardPage>
                 child: Stack(
                   children: [
                     Align(
-                      alignment: (constraints.maxWidth > timerMinWidth)
+                      alignment: (isDisplayRightPanel)
                           ? Alignment.topLeft
                           : Alignment.center,
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          maxWidth: max(bookmarksMaxWidth, bookmarksMinWidth),
+                          maxWidth: (!isDisplayRightPanel)
+                              ? max(bookmarksNoTimerMaxWidth, bookmarksMinWidth)
+                              : max(bookmarksMaxWidth, bookmarksMinWidth),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(top: 15),
@@ -61,7 +66,7 @@ class _DashboardPageState extends State<DashboardPage>
                         ),
                       ),
                     ),
-                    if (constraints.maxWidth > timerMinWidth)
+                    if (isDisplayRightPanel)
                       Align(
                         alignment: Alignment.topRight,
                         child: IntervalRefresherWidget(
