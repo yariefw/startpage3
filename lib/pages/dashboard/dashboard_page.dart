@@ -133,19 +133,17 @@ class _DashboardPageState extends State<DashboardPage>
           children: [
             FittedBox(
               fit: BoxFit.cover,
-              child: (wallpaper.isEmpty)
+              child: (wallpaper.uri.isEmpty)
                   ? Container()
-                  : (wallpaper.contains('http'))
+                  : (wallpaper.uri.contains('http'))
                       ? CachedNetworkImage(
-                          imageUrl: wallpaper,
+                          imageUrl: wallpaper.uri,
                           fit: BoxFit.fitWidth,
                         )
-                      : Image.file(
-                          File(wallpaper),
-                        ),
+                      : Image.asset(wallpaper.uri),
             ),
             Opacity(
-              opacity: 0.75,
+              opacity: wallpaper.opacity ?? 0.5,
               child: Container(
                 color: Colors.black,
               ),

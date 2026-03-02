@@ -3,7 +3,8 @@ part of 'dashboard.dart';
 mixin DashboardLoaderMethods on DashboardMethods {
   ValueNotifier<List<MenuItem>> fullBookmarksNotifier = ValueNotifier([]);
 
-  ValueNotifier<String> wallpaperNotifier = ValueNotifier('');
+  ValueNotifier<({String uri, double? opacity})> wallpaperNotifier =
+      ValueNotifier((uri: '', opacity: null));
 
   ValueNotifier<({String start, String finish})> workTimeNotifier =
       ValueNotifier((start: '', finish: ''));
@@ -83,7 +84,10 @@ mixin DashboardLoaderMethods on DashboardMethods {
       // ----- Fill runtime vars based on config -----
 
       fullBookmarksNotifier.value = parseBookmarks(data);
-      wallpaperNotifier.value = data['wallpaper'] ?? '';
+      wallpaperNotifier.value = (
+        uri: data['wallpaper'] ?? '',
+        opacity: double.tryParse(data['wallpaper_opacity'] ?? ''),
+      );
 
       workTimeNotifier.value = (
         start: data['work_start'] ?? '',
@@ -92,8 +96,13 @@ mixin DashboardLoaderMethods on DashboardMethods {
 
       // ----- Allow override from uri params -----
 
-      wallpaperNotifier.value =
-          getUriParameter('wallpaper') ?? wallpaperNotifier.value;
+      wallpaperNotifier.value = (
+        uri: getUriParameter('wallpaper') ?? wallpaperNotifier.value.uri,
+        opacity: double.tryParse(
+              (getUriParameter('wallpaper_opacity') ?? ''),
+            ) ??
+            wallpaperNotifier.value.opacity,
+      );
 
       // ----- Set displayed bookmarks -----
 
