@@ -118,17 +118,24 @@ mixin DashboardMethods {
         return null;
       }
 
+      DateTime startTime = now.copyWith(
+        hour: decodedWorkTimeStart?.hour,
+        minute: decodedWorkTimeStart?.minute,
+        second: 0,
+      );
+
+      DateTime finishTime = now.copyWith(
+        hour: decodedWorkTimeFinish?.hour,
+        minute: decodedWorkTimeFinish?.minute,
+        second: 0,
+      );
+
+      // No need to calculate progress outside work hours
+      if (now.isBefore(startTime) || now.isAfter(finishTime)) return null;
+
       double progressTimeWork = getTimeProgress(
-        start: now.copyWith(
-          hour: decodedWorkTimeStart?.hour,
-          minute: decodedWorkTimeStart?.minute,
-          second: 0,
-        ),
-        finish: now.copyWith(
-          hour: decodedWorkTimeFinish?.hour,
-          minute: decodedWorkTimeFinish?.minute,
-          second: 0,
-        ),
+        start: startTime,
+        finish: finishTime,
         current: now,
       );
 

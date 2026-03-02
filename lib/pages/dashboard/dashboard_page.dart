@@ -89,14 +89,21 @@ class _DashboardPageState extends State<DashboardPage>
                                     return SizedBox.shrink();
                                   }
 
+                                  double? progressTimeWork =
+                                      getProgressTimeWork(
+                                    workTimeStart: workTime.start,
+                                    workTimeFinish: workTime.finish,
+                                  );
+
+                                  if (progressTimeWork == null) {
+                                    return SizedBox.shrink();
+                                  }
+
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 20),
                                     child: ProgressBarWidget(
                                       title: 'Work Progress',
-                                      currentProgress: getProgressTimeWork(
-                                        workTimeStart: workTime.start,
-                                        workTimeFinish: workTime.finish,
-                                      ),
+                                      currentProgress: progressTimeWork,
                                       foregroundColor: Colors.yellow,
                                     ),
                                   );
