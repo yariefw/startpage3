@@ -166,12 +166,7 @@ class _DashboardPageState extends State<DashboardPage>
       valueListenable: fullBookmarksNotifier,
       builder: (context, fullBookmarks, child) {
         if (fullBookmarks.isEmpty) {
-          return Text(
-            'No bookmarks',
-            style: TextStyle(
-              color: Colors.grey.shade300,
-            ),
-          );
+          return SizedBox.shrink();
         }
 
         return ValueListenableBuilder(
