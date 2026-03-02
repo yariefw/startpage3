@@ -1,9 +1,8 @@
 {
-    "fullname": "Yusuf Arief Wicaksono",
-    "profile": "https://raw.githubusercontent.com/yariefw/startpage3/refs/heads/main/assets/images/profile.jpeg",
-    "wallpaper": "https://raw.githubusercontent.com/yariefw/startpage3/dbc7d39c0fc6b3a49362a38082558c2777458aa6/assets/images/wallpaper2.jpg",
-    "work_start":"07:30",
-    "work_finish":"16:30",
+    "wallpaper": "https://raw.githubusercontent.com/yariefw/startpage3/refs/heads/main/assets/images/wallpaper_frieren.png",
+    "wallpaper_opacity": "0.5",
+    "work_start": "07:30",
+    "work_finish": "16:30",
     "bookmarks": [
         {
             "label": "Productivity",
