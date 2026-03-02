@@ -203,6 +203,35 @@ class _DashboardPageState extends State<DashboardPage>
                             return ShortcutCategoryDisplayWidget(
                               label: bookmarks[index].label,
                               items: bookmarks[index].items,
+                              onTap: (item) {
+                                js.context.callMethod(
+                                  "open",
+                                  [item.url, "_self"],
+                                );
+                              },
+                              onDoubleTap: (item) {
+                                js.context.callMethod(
+                                  "open",
+                                  [item.url],
+                                );
+                              },
+                              onLongPress: (item) {
+                                Clipboard.setData(ClipboardData(text: item.url))
+                                    .then(
+                                  (_) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            "URL copied to clipboard",
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                );
+                              },
                             );
                           },
                         ),

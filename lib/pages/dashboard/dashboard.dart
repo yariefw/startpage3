@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:startpage/helpers/helpers.dart';
 import 'package:startpage/model/menu_item.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:universal_html/js.dart' as js;
 
 part 'dashboard_page.dart';
 part 'dashboard_methods.dart';

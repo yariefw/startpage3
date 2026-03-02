@@ -5,10 +5,16 @@ class ShortcutCategoryDisplayWidget extends StatelessWidget {
     super.key,
     this.label,
     this.items = const [],
+    this.onTap,
+    this.onDoubleTap,
+    this.onLongPress,
   });
 
   final String? label;
   final List<MenuItem> items;
+  final Function(MenuItem item)? onTap;
+  final Function(MenuItem item)? onDoubleTap;
+  final Function(MenuItem item)? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -55,26 +61,37 @@ class ShortcutCategoryDisplayWidget extends StatelessWidget {
                 ),
                 itemCount: items.length,
                 itemBuilder: (context, index) {
-                  return ShortcutIconWidget(
-                    url: items[index].url,
-                    label: items[index].label,
-                    icon: Container(
-                      height: constraints.maxWidth * 0.15,
-                      width: constraints.maxWidth * 0.15,
-                      margin: EdgeInsets.only(bottom: 12),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8),
+                  return GestureDetector(
+                    onTap: () {
+                      if (onTap != null) onTap!(items[index]);
+                    },
+                    onDoubleTap: () {
+                      if (onDoubleTap != null) onDoubleTap!(items[index]);
+                    },
+                    onLongPress: () {
+                      if (onLongPress != null) onLongPress!(items[index]);
+                    },
+                    child: ShortcutIconWidget(
+                      url: items[index].url,
+                      label: items[index].label,
+                      icon: Container(
+                        height: constraints.maxWidth * 0.15,
+                        width: constraints.maxWidth * 0.15,
+                        margin: EdgeInsets.only(bottom: 12),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          boxShadow: kElevationToShadow[2],
                         ),
-                        boxShadow: kElevationToShadow[2],
-                      ),
-                      child: Text(
-                        items[index].label[0].toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
+                        child: Text(
+                          items[index].label[0].toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
