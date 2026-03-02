@@ -1,24 +1,18 @@
-import 'dart:convert';
-
-MenuItem menuItemFromJson(Map<String, dynamic> data) => MenuItem.fromJson(data);
-
-String menuItemToJson(MenuItem data) => json.encode(data.toJson());
-
 class MenuItem {
   String label;
   String url;
-  List<MenuItem> submenu;
+  List<MenuItem> items;
 
   MenuItem({
     required this.label,
     this.url = '',
-    this.submenu = const [],
+    this.items = const [],
   });
 
   factory MenuItem.fromJson(Map<String, dynamic> json) => MenuItem(
         label: json["label"],
         url: json["url"] ?? '',
-        submenu: json["submenu"] == null
+        items: json["submenu"] == null
             ? []
             : List<MenuItem>.from(
                 json["submenu"].map((x) => MenuItem.fromJson(x))),
@@ -27,6 +21,6 @@ class MenuItem {
   Map<String, dynamic> toJson() => {
         "label": label,
         "url": url,
-        "submenu": List<dynamic>.from(submenu.map((x) => x.toJson())),
+        "submenu": List<dynamic>.from(items.map((x) => x.toJson())),
       };
 }
