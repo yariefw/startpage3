@@ -55,6 +55,7 @@ class ShortcutCategoryDisplayWidget extends StatelessWidget {
                 ),
               GridView.builder(
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
                   childAspectRatio: (constraints.maxWidth) / 500,
