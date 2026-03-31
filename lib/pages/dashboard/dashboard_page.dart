@@ -1,6 +1,8 @@
 part of 'dashboard.dart';
 
 class DashboardPage extends StatefulWidget {
+  static String route = '/';
+
   const DashboardPage({super.key});
 
   @override
@@ -34,7 +36,13 @@ class _DashboardPageState extends State<DashboardPage>
       child: Scaffold(
         backgroundColor: Colors.black,
         resizeToAvoidBottomInset: false,
-        body: viewDashboard(),
+        body: ValueListenableBuilder(
+          valueListenable: errorNotifier,
+          builder: (context, errorMessage, child) {
+            if (errorMessage != null) return viewError(message: errorMessage);
+            return viewDashboard();
+          },
+        ),
       ),
     );
   }
@@ -279,6 +287,20 @@ class _DashboardPageState extends State<DashboardPage>
             Icons.search,
             size: 24,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget viewError({
+    String message = '',
+  }) {
+    return Center(
+      child: Text(
+        (message.isNotEmpty) ? message : 'An unexpected error occurred.',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.grey.shade300,
         ),
       ),
     );

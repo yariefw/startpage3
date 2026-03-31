@@ -1,6 +1,8 @@
 part of 'dashboard.dart';
 
 mixin DashboardLoaderMethods on DashboardMethods {
+  ValueNotifier<String?> errorNotifier = ValueNotifier(null);
+
   ValueNotifier<List<MenuItem>> fullBookmarksNotifier = ValueNotifier([]);
 
   ValueNotifier<({String uri, double? opacity})> wallpaperNotifier =
@@ -84,6 +86,7 @@ mixin DashboardLoaderMethods on DashboardMethods {
       // ----- Fill runtime vars based on config -----
 
       fullBookmarksNotifier.value = parseBookmarks(data);
+
       wallpaperNotifier.value = (
         uri: data['wallpaper'] ?? '',
         opacity: double.tryParse(data['wallpaper_opacity'] ?? ''),
@@ -108,7 +111,15 @@ mixin DashboardLoaderMethods on DashboardMethods {
 
       displayedBookmarksNotifier.value = fullBookmarksNotifier.value;
     } catch (e) {
-      rethrow;
+      String errorMessage = e.toString();
+
+      if (errorMessage.toString().contains('not valid JSON')) {
+        errorMessage =
+            'Error: Failed when loading config.\nPlease ensure json is valid and decryption key is correct.';
+      }
+
+      errorNotifier.value =
+          (errorMessage.contains('Error: ')) ? errorMessage : '';
     }
   }
 }
