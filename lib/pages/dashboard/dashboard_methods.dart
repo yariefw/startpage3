@@ -1,0 +1,255 @@
+part of 'dashboard.dart';
+
+mixin DashboardMethods {
+  ValueNotifier<List<MenuItem>> displayedBookmarksNotifier = ValueNotifier([]);
+
+  DateTime get now => DateTime.now();
+
+  List<MenuItem> searchBookmarks({
+    required String query,
+    List<MenuItem> bookmarks = const [],
+  }) {
+    if (query.isEmpty) return bookmarks;
+
+    List<MenuItem> result = [];
+    query = query.toLowerCase();
+
+    // Search per category
+    for (MenuItem category in bookmarks) {
+      String? categoryLabel = category.label;
+      List<MenuItem> categoryItems = [];
+
+      if (category.items.isNotEmpty) {
+        for (MenuItem item in category.items) {
+          // If item label match input
+          if (item.label.toLowerCase().contains(query)) {
+            categoryItems.add(item);
+          }
+        }
+      }
+
+      if (categoryItems.isEmpty) {
+        // Try to match the label too
+        if (categoryLabel.toLowerCase().contains(query)) {
+          // If label match, add all items
+          categoryItems = category.items;
+        }
+      }
+
+      MenuItem item = MenuItem(
+        label: categoryLabel,
+        items: categoryItems,
+      );
+
+      // If items not empty, add to result
+      if (categoryItems.isNotEmpty) result.add(item);
+    }
+
+    return result;
+  }
+
+  double getTimeProgress({
+    required DateTime start,
+    required DateTime finish,
+    required DateTime current,
+  }) {
+    int totalTime = finish.difference(start).inMinutes;
+    int remainingTime = finish.difference(current).inMinutes;
+
+    double progress = (totalTime - remainingTime) / totalTime;
+    double progressNormalized = max(0, min(1, progress));
+
+    return progressNormalized;
+  }
+
+  double get progressTimeDay => getTimeProgress(
+        start: now.copyWith(hour: 0, minute: 0, second: 0),
+        finish: now.copyWith(hour: 23, minute: 59, second: 59),
+        current: now,
+      );
+
+  double get progressTimeHour => getTimeProgress(
+        start: now.copyWith(minute: 0, second: 0),
+        finish: now.copyWith(hour: now.hour + 1, minute: 0, second: 0),
+        current: now,
+      );
+
+  // ----- Work Time Calculation -----
+
+  ({int? hour, int? minute})? decodedWorkTimeStart;
+  ({int? hour, int? minute})? decodedWorkTimeFinish;
+
+  ({
+    int? hour,
+    int? minute,
+  }) decodeTimeString(
+    String timeString,
+  ) {
+    List<String> time = timeString.split(':');
+
+    int? hour = int.tryParse(time[0]);
+    int? minute = int.tryParse(time[1]);
+
+    return (hour: hour, minute: minute);
+  }
+
+  double? getProgressTimeWork({
+    String? workTimeStart,
+    String? workTimeFinish,
+  }) {
+    try {
+      // If cache empty, try to fill from params
+      if (decodedWorkTimeStart == null || decodedWorkTimeFinish == null) {
+        // If params empty, nothing to work with
+        if ((workTimeStart?.isEmpty ?? true) ||
+            (workTimeFinish?.isEmpty ?? true)) {
+          return null;
+        }
+
+        // Decode params
+        decodedWorkTimeStart = decodeTimeString(workTimeStart ?? '');
+        decodedWorkTimeFinish = decodeTimeString(workTimeFinish ?? '');
+      }
+
+      if (decodedWorkTimeStart?.hour == null ||
+          decodedWorkTimeStart?.minute == null ||
+          decodedWorkTimeFinish?.hour == null ||
+          decodedWorkTimeFinish?.minute == null) {
+        return null;
+      }
+
+      DateTime startTime = now.copyWith(
+        hour: decodedWorkTimeStart?.hour,
+        minute: decodedWorkTimeStart?.minute,
+        second: 0,
+      );
+
+      DateTime finishTime = now.copyWith(
+        hour: decodedWorkTimeFinish?.hour,
+        minute: decodedWorkTimeFinish?.minute,
+        second: 0,
+      );
+
+      // No need to calculate progress outside work hours
+      if (now.isBefore(startTime) || now.isAfter(finishTime)) return null;
+
+      double progressTimeWork = getTimeProgress(
+        start: startTime,
+        finish: finishTime,
+        current: now,
+      );
+
+      return progressTimeWork;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<dynamic> displayPopup({
+    required BuildContext context,
+    DisplayPopupType type = DisplayPopupType.alert,
+    String? title,
+    String? message,
+    List<Widget>? children,
+    Function? onConfirm,
+    Function? onCancel,
+  }) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        switch (type) {
+          case DisplayPopupType.alert:
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              title: (title != null) ? Text(title) : null,
+              content: (message != null) ? Text(message) : null,
+              insetPadding: EdgeInsets.symmetric(
+                horizontal: context.screenWidth * 0.25,
+                vertical: context.screenHeight * 0.1,
+              ),
+              actionsPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              actionsAlignment: (onConfirm != null)
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.center,
+              actions: [
+                if (onConfirm != null)
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+
+                      if (onCancel == null) return;
+                      onCancel();
+                    },
+                    child: Text('Cancel'),
+                  ),
+                SizedBox(
+                  width: (onConfirm == null) ? context.screenWidth : null,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+
+                      if (onConfirm == null) return;
+                      onConfirm();
+                    },
+                    child: Text((onConfirm != null) ? 'Confirm' : 'Ok'),
+                  ),
+                ),
+              ],
+            );
+
+          case DisplayPopupType.dialog:
+            return SimpleDialog(
+              title: (title != null) ? Text(title) : null,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              insetPadding: EdgeInsets.symmetric(
+                horizontal: context.screenWidth * 0.25,
+                vertical: context.screenHeight * 0.1,
+              ),
+              contentPadding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: 8,
+              ),
+              children: [
+                ...?children,
+                Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (onConfirm != null)
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+
+                            if (onCancel == null) return;
+                            onCancel();
+                          },
+                          child: Text('Cancel'),
+                        ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+
+                          if (onConfirm == null) return;
+                          onConfirm();
+                        },
+                        child: Text((onConfirm != null) ? 'Confirm' : 'Close'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+        }
+      },
+    );
+  }
+}
+
+enum DisplayPopupType { alert, dialog }

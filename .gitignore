@@ -1,0 +1,8 @@
+.vscode/settings.json
+.dart_tool/
+build/
+pubspec.lock
+assets/json/
+android/
+.flutter-plugins
+.flutter-plugins-dependencies
