@@ -13,6 +13,7 @@ class InputTextWidget extends StatefulWidget {
     this.maxLength,
     this.prefixText,
     this.obscureText = false,
+    this.autofillHints = const [],
   });
 
   final bool enabled;
@@ -25,6 +26,7 @@ class InputTextWidget extends StatefulWidget {
   final int? maxLength;
   final String? prefixText;
   final bool obscureText;
+  final List<String> autofillHints;
 
   @override
   State<InputTextWidget> createState() => _InputTextWidgetState();
@@ -42,6 +44,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
       maxLengthEnforcement:
           (widget.maxLength != null) ? MaxLengthEnforcement.enforced : null,
       obscureText: widget.obscureText,
+      autofillHints: widget.autofillHints,
       textAlign: TextAlign.end,
       style: widget.style,
       decoration: InputDecoration(
