@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:startpage/pages/dashboard/dashboard.dart';
+import 'package:startpage/pages/launchpad/launchpad.dart';
 
 class AppRouter {
   static const _envConfigs = {
@@ -8,8 +9,8 @@ class AppRouter {
 
   static List<GoRoute> get routes => [
         GoRoute(
-          path: DashboardLoadingPage.route,
-          builder: (context, state) => DashboardLoadingPage(),
+          path: LaunchpadPage.route,
+          builder: (context, state) => LaunchpadPage(),
         ),
         GoRoute(
           path: DashboardPage.route,
