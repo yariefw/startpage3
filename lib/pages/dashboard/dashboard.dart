@@ -22,3 +22,4 @@ part 'widgets/date_time_widget.dart';
 part 'widgets/progress_bar_widget.dart';
 part 'widgets/input_text_widget.dart';
 part 'widgets/input_checkbox_widget.dart';
+part 'widgets/input_slider_widget.dart';

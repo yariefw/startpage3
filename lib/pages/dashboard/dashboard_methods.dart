@@ -147,6 +147,7 @@ mixin DashboardMethods {
 
   Future<dynamic> displayPopup({
     required BuildContext context,
+    bool barrierDismissible = true,
     DisplayPopupType type = DisplayPopupType.alert,
     String? title,
     String? message,
@@ -156,6 +157,7 @@ mixin DashboardMethods {
   }) async {
     return showDialog(
       context: context,
+      barrierDismissible: barrierDismissible,
       builder: (context) {
         switch (type) {
           case DisplayPopupType.alert:

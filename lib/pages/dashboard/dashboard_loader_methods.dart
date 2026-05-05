@@ -148,16 +148,6 @@ mixin DashboardLoaderMethods on DashboardMethods {
         finish: decodedConfig['work_finish'] ?? '',
       );
 
-      // ----- Allow override from uri params -----
-
-      wallpaperNotifier.value = (
-        uri: getUriParameter('wallpaper') ?? wallpaperNotifier.value.uri,
-        opacity: double.tryParse(
-              (getUriParameter('wallpaper_opacity') ?? ''),
-            ) ??
-            wallpaperNotifier.value.opacity,
-      );
-
       // ----- Set displayed bookmarks -----
 
       displayedBookmarksNotifier.value = fullBookmarksNotifier.value;
@@ -186,6 +176,50 @@ mixin DashboardLoaderMethods on DashboardMethods {
         (errorMessage.contains('Error: ')) ? errorMessage : '';
 
     pageLoadingNotifier.value = false;
+  }
+
+  void overrideUriConfig() {
+    overrideUriWallpaper();
+  }
+
+  void overrideLocalConfig() {
+    overrideLocalWallpaper();
+  }
+
+  void overrideUriWallpaper() {
+    wallpaperNotifier.value = (
+      uri: getUriParameter('wallpaper') ?? wallpaperNotifier.value.uri,
+      opacity: double.tryParse(
+            (getUriParameter('wallpaper_opacity') ?? ''),
+          ) ??
+          wallpaperNotifier.value.opacity,
+    );
+  }
+
+  void overrideLocalWallpaper() {
+    String localWallpaper = storage.getWallpaper();
+    String localWallpaperOpacity = storage.getWallpaperOpacity();
+
+    wallpaperNotifier.value = (
+      uri: (localWallpaper.isNotEmpty)
+          ? localWallpaper
+          : wallpaperNotifier.value.uri,
+      opacity: (localWallpaperOpacity.isNotEmpty)
+          ? double.tryParse(localWallpaperOpacity) ??
+              wallpaperNotifier.value.opacity
+          : wallpaperNotifier.value.opacity,
+    );
+  }
+
+  void updateLocalWallpaper({
+    required String wallpaperUrl,
+    double wallpaperOpacity = 0.5,
+  }) {
+    storage.updateWallpaper(url: wallpaperUrl);
+
+    storage.updateWallpaperOpacity(
+      opacity: (wallpaperUrl.isNotEmpty) ? wallpaperOpacity.toString() : '',
+    );
   }
 
   Future<String> decryptConfig({

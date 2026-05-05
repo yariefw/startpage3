@@ -9,7 +9,11 @@
             "request": "launch",
             "type": "dart",
             "args": [
-                "--verbose"
+                "--verbose",
+                "--web-browser-flag",
+                "--disable-web-security",
+                "--web-renderer",
+                "html",
             ]
         },
         {

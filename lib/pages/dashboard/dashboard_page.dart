@@ -1,19 +1,5 @@
 part of 'dashboard.dart';
 
-class DashboardLoadingPage extends StatelessWidget {
-  static String route = '/';
-
-  const DashboardLoadingPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: Center(child: CircularProgressIndicator()),
-    );
-  }
-}
-
 class DashboardPageArgs {
   String? config;
   DashboardPageArgs({this.config});
@@ -45,6 +31,8 @@ class _DashboardPageState extends State<DashboardPage>
 
   final TextEditingController _configController = TextEditingController();
   final TextEditingController _configKeyController = TextEditingController();
+  final TextEditingController _configWallpaperController =
+      TextEditingController();
 
   double get bookmarksMinWidth => 325;
   double get bookmarksMaxWidth => context.screenWidth * 0.18;
@@ -78,6 +66,20 @@ class _DashboardPageState extends State<DashboardPage>
       }
     }
 
+    // Local Overrides
+    double localWallpaperOpacity = 0.5;
+
+    if (!isFirstLoad) {
+      String localWallpaper = storage.getWallpaper();
+
+      if (localWallpaper.isNotEmpty) {
+        _configWallpaperController.text = localWallpaper;
+
+        localWallpaperOpacity =
+            double.tryParse(storage.getWallpaperOpacity()) ?? 0.5;
+      }
+    }
+
     // Disable source edit if using direct config
     if (paramConfigDirect.isNotEmpty) allowEditSource = false;
 
@@ -87,14 +89,34 @@ class _DashboardPageState extends State<DashboardPage>
       configController: (allowEditSource) ? _configController : null,
       saveKeyInitial: saveKey,
       onSaveKeyChanged: (isCheck) => saveKey = isCheck,
+      wallpaperUrlController:
+          (!isFirstLoad) ? _configWallpaperController : null,
+      wallpaperOpacityInitial: localWallpaperOpacity,
+      onWallpaperOpacityChanged: (newValue) => localWallpaperOpacity = newValue,
       onConfirm: () async {
         await Future.delayed(Duration(milliseconds: 100));
 
-        processConfig(
+        await processConfig(
           config: _configController.text,
           key: _configKeyController.text,
           saveKey: saveKey,
+        ).then(
+          (value) {
+            if (isFirstLoad) {
+              overrideUriConfig();
+              overrideLocalConfig();
+            }
+          },
         );
+
+        if (!isFirstLoad) {
+          overrideUriConfig();
+
+          processConfigOverrideLocal(
+            wallpaperUrl: _configWallpaperController.text,
+            wallpaperOpacity: localWallpaperOpacity,
+          );
+        }
 
         _configKeyController.clear();
         _configController.clear();
@@ -125,6 +147,28 @@ class _DashboardPageState extends State<DashboardPage>
     }
   }
 
+  void processConfigOverrideLocal({
+    required String wallpaperUrl,
+    double wallpaperOpacity = 0.5,
+  }) {
+    processConfigWallpaper(
+      wallpaperUrl: wallpaperUrl,
+      wallpaperOpacity: wallpaperOpacity,
+    );
+  }
+
+  void processConfigWallpaper({
+    required String wallpaperUrl,
+    double wallpaperOpacity = 0.5,
+  }) {
+    updateLocalWallpaper(
+      wallpaperUrl: wallpaperUrl,
+      wallpaperOpacity: wallpaperOpacity,
+    );
+
+    overrideLocalWallpaper();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -135,13 +179,23 @@ class _DashboardPageState extends State<DashboardPage>
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (paramConfig.isNotEmpty && paramConfigKey.isNotEmpty) {
         // Params with key, ignore local
-        processConfig(config: paramConfig, key: paramConfigKey);
+        processConfig(config: paramConfig, key: paramConfigKey).then(
+          (value) {
+            overrideUriConfig();
+            overrideLocalConfig();
+          },
+        );
       } else if (paramConfig.isNotEmpty) {
         // Params without key, ask for key
         showDialogEditConfig(isFirstLoad: true);
       } else if (isLocalConfigAvailable) {
         // No params, use local
-        processConfigLocal();
+        processConfigLocal().then(
+          (value) {
+            overrideUriConfig();
+            overrideLocalConfig();
+          },
+        );
       } else {
         // Nothing provided, ask user for config
         showDialogEditConfig(isFirstLoad: true);
@@ -487,36 +541,120 @@ class _DashboardPageState extends State<DashboardPage>
     TextEditingController? configController,
     bool saveKeyInitial = false,
     Function(bool isCheck)? onSaveKeyChanged,
+    TextEditingController? wallpaperUrlController,
+    double wallpaperOpacityInitial = 0.5,
+    Function(double newValue)? onWallpaperOpacityChanged,
     Function? onConfirm,
     Function? onCancel,
   }) {
     return displayPopup(
       context: context,
+      barrierDismissible: false,
       type: DisplayPopupType.dialog,
       title: 'Settings',
       children: [
-        if (configController != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: InputTextWidget(
-              controller: configController,
-              labelText: 'Config',
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (wallpaperUrlController != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      'Bookmarks',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: (wallpaperUrlController != null) ? 20 : 0,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (configController != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: InputTextWidget(
+                            controller: configController,
+                            labelText: 'Config',
+                          ),
+                        ),
+                      InputTextWidget(
+                        controller: keyController,
+                        obscureText: true,
+                        labelText: 'Encryption Key',
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: InputCheckboxWidget(
+                          labelText: 'Save Key',
+                          initialValue: saveKeyInitial,
+                          onChanged: (isCheck) {
+                            if (onSaveKeyChanged != null) {
+                              onSaveKeyChanged(isCheck);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-        InputTextWidget(
-          controller: keyController,
-          obscureText: true,
-          labelText: 'Encryption Key',
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: InputCheckboxWidget(
-            labelText: 'Save Key',
-            initialValue: saveKeyInitial,
-            onChanged: (isCheck) {
-              if (onSaveKeyChanged != null) onSaveKeyChanged(isCheck);
-            },
-          ),
+            if (wallpaperUrlController != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Text(
+                        'Wallpaper',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InputTextWidget(
+                            controller: wallpaperUrlController,
+                            labelText: 'Wallpaper Url',
+                          ),
+                          if (onWallpaperOpacityChanged != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: InputSliderWidget(
+                                labelText: 'Wallpaper Opacity',
+                                reversed: true,
+                                initialValue: wallpaperOpacityInitial,
+                                onChanged: (newValue) =>
+                                    onWallpaperOpacityChanged(newValue),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
         ),
       ],
       onConfirm: onConfirm,

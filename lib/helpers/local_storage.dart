@@ -3,6 +3,9 @@ part of 'helpers.dart';
 class LocalStorage {
   String keyConfigStartpage = 'config_startpage';
   String keyConfigStartpageKey = 'config_startpage_key';
+  String keyConfigStartpageWallpaper = 'config_startpage_wallpaper';
+  String keyConfigStartpageWallpaperOpacity =
+      'config_startpage_wallpaper_opacity';
 
   bool get isLocalConfigAvailable =>
       (html.window.localStorage[keyConfigStartpage] ?? '').isNotEmpty;
@@ -77,4 +80,20 @@ class LocalStorage {
 
     return decConfig;
   }
+
+  String getWallpaper() =>
+      html.window.localStorage[keyConfigStartpageWallpaper] ?? '';
+
+  void updateWallpaper({
+    required String url,
+  }) =>
+      html.window.localStorage[keyConfigStartpageWallpaper] = url;
+
+  String getWallpaperOpacity() =>
+      html.window.localStorage[keyConfigStartpageWallpaperOpacity] ?? '';
+
+  void updateWallpaperOpacity({
+    required String opacity,
+  }) =>
+      html.window.localStorage[keyConfigStartpageWallpaperOpacity] = opacity;
 }
