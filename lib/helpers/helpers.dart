@@ -9,6 +9,7 @@ import 'package:universal_html/html.dart' as html;
 
 part 'aes_gcm.dart';
 part 'sizing_extension.dart';
+part 'string_extension.dart';
 part 'debouncer.dart';
 part 'logging.dart';
 part 'local_storage.dart';

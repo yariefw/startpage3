@@ -23,7 +23,7 @@ class ProgressBarWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if (title?.isNotEmpty ?? false)
+        if ((title?.isNotEmpty ?? false) && currentProgress != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: Text(

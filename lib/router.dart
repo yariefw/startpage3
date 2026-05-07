@@ -16,7 +16,7 @@ class AppRouter {
           path: DashboardPage.route,
           builder: (context, state) => DashboardPage(
             args: DashboardPageArgs(
-              config: _envConfigs[state.uri.queryParameters['source']],
+              envConfig: _envConfigs[state.uri.queryParameters['source']],
             ),
           ),
         ),
