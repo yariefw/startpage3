@@ -88,6 +88,18 @@ class _DashboardPageState extends State<DashboardPage>
     } else {
       // Not first launch, auto apply
       DashboardConfigurationData savedConfig = getSavedConfiguration();
+
+      savedConfig.bookmarks = (args.envConfig?.isNotEmpty ?? false)
+          ? args.envConfig ?? ''
+          : (pBookmarksDirect.isNotEmpty)
+              ? pBookmarksDirect
+              : (pBookmarksUrl.isNotEmpty)
+                  ? pBookmarksUrl
+                  : savedConfig.bookmarks;
+
+      savedConfig.bookmarksKey =
+          (pBookmarksKey.isNotEmpty) ? pBookmarksKey : savedConfig.bookmarksKey;
+
       applyConfiguration(configuration: savedConfig);
     }
   }
