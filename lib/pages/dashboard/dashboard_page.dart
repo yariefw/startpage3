@@ -40,7 +40,9 @@ class _DashboardPageState extends State<DashboardPage>
   Future<dynamic> showPageSettings({
     bool isFirstLoad = false,
   }) async {
-    DashboardConfigurationData savedConfig = getSavedConfiguration();
+    DashboardConfigurationData savedConfig = getConfiguration(
+      envConfig: args.envConfig,
+    );
 
     return showDialogSettings(
       context: context,
@@ -87,18 +89,9 @@ class _DashboardPageState extends State<DashboardPage>
       );
     } else {
       // Not first launch, auto apply
-      DashboardConfigurationData savedConfig = getSavedConfiguration();
-
-      savedConfig.bookmarks = (args.envConfig?.isNotEmpty ?? false)
-          ? args.envConfig ?? ''
-          : (pBookmarksDirect.isNotEmpty)
-              ? pBookmarksDirect
-              : (pBookmarksUrl.isNotEmpty)
-                  ? pBookmarksUrl
-                  : savedConfig.bookmarks;
-
-      savedConfig.bookmarksKey =
-          (pBookmarksKey.isNotEmpty) ? pBookmarksKey : savedConfig.bookmarksKey;
+      DashboardConfigurationData savedConfig = getConfiguration(
+        envConfig: args.envConfig,
+      );
 
       applyConfiguration(configuration: savedConfig);
     }

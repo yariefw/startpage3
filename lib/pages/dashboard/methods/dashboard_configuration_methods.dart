@@ -51,47 +51,6 @@ mixin DashboardConfigurationMethods
     );
   }
 
-  DashboardConfigurationData getSavedConfiguration() {
-    DashboardConfigurationData savedConfig = DashboardConfigurationData(
-      bookmarks: '',
-    );
-
-    String savedBookmarks = storage.getBookmarksUndecrypted();
-
-    if (savedBookmarks.isNotEmpty) {
-      savedConfig.bookmarks = savedBookmarks;
-    }
-
-    String savedBookmarksKey = storage.getBookmarksKey();
-
-    if (savedBookmarksKey.isNotEmpty) {
-      savedConfig.bookmarksKey = savedBookmarksKey;
-    }
-
-    String savedWallpaper = storage.getWallpaperUrl();
-
-    if (savedWallpaper.isNotEmpty) {
-      savedConfig.wallpaperUrl = savedWallpaper;
-    }
-
-    String savedWallpaperOpacity = storage.getWallpaperOpacity();
-
-    if (savedWallpaperOpacity.isNotEmpty) {
-      savedConfig.wallpaperOpacity =
-          double.tryParse(savedWallpaperOpacity) ?? 0.5;
-    }
-
-    String savedWorkStart = storage.getWorkStart();
-    String savedWorkFinish = storage.getWorkFinish();
-
-    if (savedWorkStart.isNotEmpty && savedWorkFinish.isNotEmpty) {
-      savedConfig.workStart = savedWorkStart;
-      savedConfig.workFinish = savedWorkFinish;
-    }
-
-    return savedConfig;
-  }
-
   Future<void> applyConfiguration({
     required DashboardConfigurationData configuration,
     bool isFirstLoad = false,
