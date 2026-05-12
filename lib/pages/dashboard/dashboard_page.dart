@@ -371,29 +371,14 @@ class _DashboardPageState extends State<DashboardPage>
   Widget viewError({
     String message = '',
   }) {
-    return Stack(
-      children: [
-        Center(
-          child: Text(
-            (message.isNotEmpty) ? message : 'An unexpected error occurred.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.grey.shade300,
-            ),
-          ),
+    return Center(
+      child: Text(
+        (message.isNotEmpty) ? message : 'An unexpected error occurred.',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.grey.shade300,
         ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => showPageSettings(),
-              child: ButtonSettingsWidget(),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
